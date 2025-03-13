@@ -5,10 +5,10 @@ import org.example.interfaces.Bucket;
 import org.example.interfaces.HashTable;
 import org.example.interfaces.LinkedList;
 
-public class HashTableImpl<K,V> implements HashTable<K, V> {
+public class HashTableImpl<K, V> implements HashTable<K, V> {
     private static final int DEFAULT_SIZE = 10;
     private final int DEFAULT_THRESHOLD = 8;
-    private Bucket<HashTableEntry<K,V>>[] buckets;
+    private Bucket<HashTableEntry<K, V>>[] buckets;
     private int capacity;
     private int threshold;
 
@@ -38,7 +38,7 @@ public class HashTableImpl<K,V> implements HashTable<K, V> {
 
             if (bucketSize + 1 <= threshold) {
                 for (int i = 0; i < bucketSize; i++) {
-                    var entry = bucket.search(new HashTableEntry<>(key,null));
+                    var entry = bucket.search(new HashTableEntry<>(key, null));
                     if (entry != null) return;
                 }
                 bucket.insert(new HashTableEntry<>(key, value));
@@ -66,7 +66,7 @@ public class HashTableImpl<K,V> implements HashTable<K, V> {
             return null;
         }
 
-        var entry = buckets[index].search(new HashTableEntry<>(key,null));
+        var entry = buckets[index].search(new HashTableEntry<>(key, null));
         if (entry != null) {
             return entry.value;
         }
@@ -85,7 +85,7 @@ public class HashTableImpl<K,V> implements HashTable<K, V> {
         var thresholdValue = System.getenv("threshold");
         try {
             if (thresholdValue != null) {
-                if(Integer.parseInt(thresholdValue) <= 6) {
+                if (Integer.parseInt(thresholdValue) <= 6) {
                     System.out.println("Threshold value must be greater than 6, using default(8)");
                     return DEFAULT_THRESHOLD;
                 }
@@ -108,5 +108,14 @@ public class HashTableImpl<K,V> implements HashTable<K, V> {
                 bucket.print();
             }
         }
+    }
+
+    @Override
+    public int size() {
+        int totalSize = 0;
+        for (Bucket<HashTableEntry<K, V>> bucket : buckets) {
+            totalSize += bucket.size();
+        }
+        return totalSize;
     }
 }

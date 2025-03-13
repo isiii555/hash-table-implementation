@@ -3,18 +3,18 @@ package org.example.implementations;
 import org.example.interfaces.BinaryTree;
 import org.example.interfaces.Processor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class BinaryTreeImpl<T> implements BinaryTree<T> {
     private BinaryTreeNode<T> root;
+    private int size;
 
     public BinaryTreeImpl() {
         root = null;
+        size = 0;
     }
 
     public void insert(T key) {
         root = insertRec(root, key);
+        size++;
     }
 
     private BinaryTreeNode<T> insertRec(BinaryTreeNode<T> root, T key) {
@@ -47,6 +47,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
 
     public void delete(T key) {
         root = deleteRec(root, key);
+        size--;
     }
 
     private BinaryTreeNode<T> deleteRec(BinaryTreeNode<T> root, T key) {
@@ -91,31 +92,14 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
     }
 
     @Override
-    public Iterable<T> getElements() {
-        List<T> elements = new ArrayList<>();
-        inOrderTraversal(root, elements);
-        return elements;
-    }
-
-    private void inOrderTraversal(BinaryTreeNode<T> node, List<T> elements) {
-        if (node != null) {
-            inOrderTraversal(node.left, elements);
-            elements.add(node.key);
-            inOrderTraversal(node.right, elements);
-        }
-    }
-
-    private int sizeRec(BinaryTreeNode<T> node) {
-        if (node == null) {
-            return 0;
-        }
-        return 1 + sizeRec(node.left) + sizeRec(node.right);
+    public int getSize() {
+        return size;
     }
 
     @Override
     public BinaryTree<T> processElements(Processor<T> processor) {
         var newTree = new BinaryTreeImpl<T>();
-        processTreeRec(root, processor,newTree);
+        processTreeRec(root, processor, newTree);
         return newTree;
     }
 
@@ -123,10 +107,9 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         if (node != null) {
             T result = processor.process(node.key);
             newTree.insert(result);
-            processTreeRec(node.left, processor,newTree);
-            processTreeRec(node.right, processor,newTree);
+            processTreeRec(node.left, processor, newTree);
+            processTreeRec(node.right, processor, newTree);
         }
     }
-
 }
 

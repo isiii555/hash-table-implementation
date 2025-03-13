@@ -5,6 +5,7 @@ import java.util.Objects;
 public class HashTableEntry<K, V> {
     K key;
     V value;
+
     public HashTableEntry(K key, V value) {
         this.key = key;
         this.value = value;

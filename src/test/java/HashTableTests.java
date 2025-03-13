@@ -55,6 +55,17 @@ public class HashTableTests {
 
         //assert
         assertEquals("A",table.get(1));
+        assertEquals(1,table.size());
+    }
+
+    @Test
+    void test_size() {
+        table.put(1,"A");
+        table.put(21,"A");
+        table.put(31,"A");
+        table.put(41,"A");
+        table.put(23,"A");
+        assertEquals(5,table.size());
     }
 
     @Test

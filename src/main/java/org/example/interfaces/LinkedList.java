@@ -8,6 +8,7 @@ public interface LinkedList<T> extends Bucket<T> {
     boolean isEmpty();
 
     T get(int index);
+
     LinkedList<T> processElements(Processor<T> processor);
 
 }

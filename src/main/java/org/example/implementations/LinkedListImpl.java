@@ -10,9 +10,12 @@ public class LinkedListImpl<T> implements LinkedList<T> {
     private LinkedListNode<T> head;
     private int size;
 
+    private int count;
+
     public LinkedListImpl() {
         this.head = null;
         this.size = 0;
+        count = 0;
     }
 
     @Override
@@ -118,14 +121,8 @@ public class LinkedListImpl<T> implements LinkedList<T> {
     }
 
     @Override
-    public Iterable<T> getElements() {
-        List<T> elements = new ArrayList<>();
-        var current = head;
-        while (current != null) {
-            elements.add(current.data);
-            current = current.next;
-        }
-        return elements;
+    public int getSize() {
+        return size;
     }
 
     @Override
