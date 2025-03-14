@@ -1,9 +1,14 @@
 package org.example.implementations;
 
+import org.example.annotations.JsonElement;
+import org.example.annotations.JsonSerializable;
 import org.example.interfaces.BinaryTree;
 import org.example.interfaces.Processor;
 
+@JsonSerializable
 public class BinaryTreeImpl<T> implements BinaryTree<T> {
+
+    @JsonElement(key = "root")
     private BinaryTreeNode<T> root;
     private int size;
 

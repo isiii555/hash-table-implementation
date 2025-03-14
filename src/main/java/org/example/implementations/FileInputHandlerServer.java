@@ -27,7 +27,7 @@ public class FileInputHandlerServer implements HttpHandler {
             if (!filepath.isEmpty()) {
                 filepath  = filepath.replace("\\", "/").replace("\"", "");
                 File file = new File(filepath);
-
+                var jsonConverter = new JsonConverter();
                 try (Scanner fileReader = new Scanner(file)) {
                     while (fileReader.hasNextLine()) {
                         String value = fileReader.nextLine();
@@ -35,9 +35,12 @@ public class FileInputHandlerServer implements HttpHandler {
                         table.put(key, value);
                     }
                     table.print();
-                    sendResponse(exchange,201,"Values added to table");
+                    var json = jsonConverter.convertToJson(table);
+                    sendResponse(exchange,201,json);
                 } catch (FileNotFoundException e) {
                     sendResponse(exchange,404,"File not found");
+                } catch (Exception e) {
+                    sendResponse(exchange,500,"Internal server error");
                 }
             } else {
                 sendResponse(exchange, 400, "Value is empty");

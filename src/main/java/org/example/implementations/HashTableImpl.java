@@ -1,13 +1,17 @@
 package org.example.implementations;
 
+import org.example.annotations.JsonElement;
+import org.example.annotations.JsonSerializable;
 import org.example.interfaces.BinaryTree;
 import org.example.interfaces.Bucket;
 import org.example.interfaces.HashTable;
 import org.example.interfaces.LinkedList;
 
+@JsonSerializable
 public class HashTableImpl<K, V> implements HashTable<K, V> {
     private static final int DEFAULT_SIZE = 10;
     private final int DEFAULT_THRESHOLD = 8;
+    @JsonElement(key = "buckets")
     private Bucket<HashTableEntry<K, V>>[] buckets;
     private int capacity;
     private int threshold;
@@ -23,6 +27,10 @@ public class HashTableImpl<K, V> implements HashTable<K, V> {
         for (int i = 0; i < capacity; i++) {
             buckets[i] = new LinkedListImpl<>();
         }
+    }
+
+    public Bucket<HashTableEntry<K, V>>[] getBuckets() {
+        return buckets;
     }
 
     private int getIndex(K key) {
