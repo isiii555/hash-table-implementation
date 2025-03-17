@@ -6,6 +6,7 @@ import org.example.annotations.JsonSerializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class JsonConverter {
             throw new Exception("The object to serialize is null");
         }
 
-        Class<?> clazz = object.getClass();
+       var clazz = object.getClass();
         if (!clazz.isAnnotationPresent(JsonSerializable.class)) {
             throw new Exception("The class "
                     + clazz.getSimpleName()
@@ -35,7 +36,7 @@ public class JsonConverter {
             return "null";
         }
 
-        Class<?> clazz = object.getClass();
+        var clazz = object.getClass();
 
         if (Number.class.isAssignableFrom(clazz) ||
                 Character.class.isAssignableFrom(clazz) ||
@@ -47,7 +48,7 @@ public class JsonConverter {
             return arrayToJson(object);
         }
 
-        Map<String, String> jsonElementsMap = new HashMap<>();
+        Map<String, String> jsonElementsMap = new LinkedHashMap<>();
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(JsonElement.class)) {

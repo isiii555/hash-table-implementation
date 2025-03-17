@@ -32,7 +32,7 @@ public class FileInputHandlerServer implements HttpHandler {
                     while (fileReader.hasNextLine()) {
                         String value = fileReader.nextLine();
                         int key = (int) (Math.random() * 101);
-                        table.put(key, value);
+                        table.insert(new HashTableEntry<>(key,value));
                     }
                     table.print();
                     var json = jsonConverter.convertToJson(table);
@@ -40,7 +40,7 @@ public class FileInputHandlerServer implements HttpHandler {
                 } catch (FileNotFoundException e) {
                     sendResponse(exchange,404,"File not found");
                 } catch (Exception e) {
-                    sendResponse(exchange,500,"Internal server error");
+                    sendResponse(exchange,500,e.getMessage());
                 }
             } else {
                 sendResponse(exchange, 400, "Value is empty");

@@ -20,14 +20,16 @@ public class ManualInputHandlerServer implements HttpHandler {
         if ("POST".equals(exchange.getRequestMethod())) {
             var body = exchange.getRequestBody();
             var value = new String(body.readAllBytes(), StandardCharsets.UTF_8);
-            if (!value.isEmpty()) {
-                int key = (int) (Math.random() * 101);
-                table.put(key, value);
+            int key = (int) (Math.random() * 101);
+            try {
+                table.insert(new HashTableEntry<>(key, value));
                 table.print();
                 sendResponse(exchange, 201, "Value added" + value);
-            } else {
-                sendResponse(exchange, 400, "Value is empty");
+            } catch (IllegalArgumentException e) {
+                sendResponse(exchange, 400, e.getMessage());
             }
+
+
         } else {
             sendResponse(exchange, 405, "Method not allowed");
         }

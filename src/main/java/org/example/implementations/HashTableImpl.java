@@ -1,11 +1,14 @@
 package org.example.implementations;
 
+import org.example.annotations.HashTableData;
 import org.example.annotations.JsonElement;
 import org.example.annotations.JsonSerializable;
 import org.example.interfaces.BinaryTree;
 import org.example.interfaces.Bucket;
 import org.example.interfaces.HashTable;
 import org.example.interfaces.LinkedList;
+
+import java.util.Map;
 
 @JsonSerializable
 public class HashTableImpl<K, V> implements HashTable<K, V> {
@@ -35,6 +38,36 @@ public class HashTableImpl<K, V> implements HashTable<K, V> {
 
     private int getIndex(K key) {
         return key.hashCode() % buckets.length;
+    }
+
+    @Override
+    public void insert(@HashTableData(keyNotNull = true, valueNotNull = true, keyMustBePositiveInteger = true) HashTableEntry<K, V> data) {
+        HashTableValidator.validateData(data.getKey(), data.getValue(), this.getClass(), "insert");
+        var index = getIndex(data.getKey());
+        if (buckets[index].size() <= threshold) {
+            var bucket = (LinkedList<HashTableEntry<K, V>>) buckets[index];
+            var bucketSize = bucket.size();
+
+            if (bucketSize + 1 <= threshold) {
+                for (int i = 0; i < bucketSize; i++) {
+                    var entry = bucket.search(new HashTableEntry<>(data.getKey(), null));
+                    if (entry != null) return;
+                }
+                bucket.insert(new HashTableEntry<>(data.getKey(), data.getValue()));
+            } else {
+                BinaryTree<HashTableEntry<K, V>> tree = new BinaryTreeImpl<>();
+                for (int i = 0; i < bucketSize; i++) {
+                    var entry = bucket.get(i);
+                    tree.insert(entry);
+                }
+                tree.insert(new HashTableEntry<>(data.getKey(), data.getValue()));
+                buckets[index] = tree;
+            }
+        } else {
+            var bucket = (BinaryTree<HashTableEntry<K, V>>) buckets[index];
+            var newEntry = new HashTableEntry<>(data.getKey(), data.getValue());
+            bucket.insert(newEntry);
+        }
     }
 
     @Override
