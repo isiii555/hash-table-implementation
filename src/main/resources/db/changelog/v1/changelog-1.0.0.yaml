@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: islam
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: FirstName
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+

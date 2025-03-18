@@ -3,10 +3,10 @@ package org.example.implementations;
 import org.example.annotations.HashTableData;
 
 public class HashTableValidator {
-    public static <K,V> void validateData(K key, V value, Class<?> clazz, String methodName) {
+    public static <K, V> void validateData(K key, V value, Class<?> clazz, String methodName) {
 
         try {
-            var method = clazz.getDeclaredMethod(methodName,HashTableEntry.class);
+            var method = clazz.getDeclaredMethod(methodName, HashTableEntry.class);
 
             var parameters = method.getParameters();
 
@@ -32,8 +32,7 @@ public class HashTableValidator {
                     throw new IllegalArgumentException("Key must be a positive integer");
                 }
             }
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Method " + methodName + " not found", e);
         }
     }
