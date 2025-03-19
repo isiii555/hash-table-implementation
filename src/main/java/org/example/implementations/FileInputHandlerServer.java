@@ -3,15 +3,13 @@ package org.example.implementations;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.example.interfaces.HashTable;
+import org.example.interfaces.InputHandlerServer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class FileInputHandlerServer implements HttpHandler {
+public class FileInputHandlerServer implements HttpHandler, InputHandlerServer {
 
     private HashTable<Integer, String> table;
 
@@ -25,22 +23,23 @@ public class FileInputHandlerServer implements HttpHandler {
             var body = exchange.getRequestBody();
             var filepath = new String(body.readAllBytes(), StandardCharsets.UTF_8);
             if (!filepath.isEmpty()) {
-                filepath  = filepath.replace("\\", "/").replace("\"", "");
+                filepath = filepath.replace("\\", "/").replace("\"", "");
                 File file = new File(filepath);
                 var jsonConverter = new JsonConverter();
                 try (Scanner fileReader = new Scanner(file)) {
                     while (fileReader.hasNextLine()) {
                         String value = fileReader.nextLine();
                         int key = (int) (Math.random() * 101);
-                        table.insert(new HashTableEntry<>(key,value));
+                        table.insert(new HashTableEntry<>(key, value));
                     }
                     table.print();
                     var json = jsonConverter.convertToJson(table);
-                    sendResponse(exchange,201,json);
+                    saveDatabase(table);
+                    sendResponse(exchange, 201, json);
                 } catch (FileNotFoundException e) {
-                    sendResponse(exchange,404,"File not found");
+                    sendResponse(exchange, 404, "File not found");
                 } catch (Exception e) {
-                    sendResponse(exchange,500,e.getMessage());
+                    sendResponse(exchange, 500, e.getMessage());
                 }
             } else {
                 sendResponse(exchange, 400, "Value is empty");

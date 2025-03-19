@@ -1,6 +1,5 @@
 package org.example.implementations;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.example.annotations.JsonElement;
 import org.example.annotations.JsonSerializable;
 import org.example.interfaces.LinkedList;
@@ -14,16 +13,10 @@ public class LinkedListImpl<T> implements LinkedList<T> {
     @JsonElement(key = "head")
     private LinkedListNode<T> head;
     private int size;
-    private int count;
 
     public LinkedListImpl() {
         this.head = null;
         this.size = 0;
-        count = 0;
-    }
-
-    public LinkedListNode<T> getHead() {
-        return head;
     }
 
     @Override
@@ -132,6 +125,18 @@ public class LinkedListImpl<T> implements LinkedList<T> {
     public int getSize() {
         return size;
     }
+
+    @Override
+    public List<T> getElements() {
+        List<T> elements = new ArrayList<>();
+        var current = head;
+        while (current != null) {
+            elements.add(current.data);
+            current = current.next;
+        }
+        return elements;
+    }
+
 
     @Override
     public LinkedList<T> processElements(Processor<T> processor) {

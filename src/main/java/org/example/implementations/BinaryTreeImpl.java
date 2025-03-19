@@ -5,6 +5,9 @@ import org.example.annotations.JsonSerializable;
 import org.example.interfaces.BinaryTree;
 import org.example.interfaces.Processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @JsonSerializable
 public class BinaryTreeImpl<T> implements BinaryTree<T> {
 
@@ -114,6 +117,21 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
             newTree.insert(result);
             processTreeRec(node.left, processor, newTree);
             processTreeRec(node.right, processor, newTree);
+        }
+    }
+
+    @Override
+    public List<T> getElements() {
+        List<T> elements = new ArrayList<>();
+        inOrderTraversal(root, elements);
+        return elements;
+    }
+
+    private void inOrderTraversal(BinaryTreeNode<T> node, List<T> elements) {
+        if (node != null) {
+            inOrderTraversal(node.left, elements);
+            elements.add(node.key);
+            inOrderTraversal(node.right, elements);
         }
     }
 }

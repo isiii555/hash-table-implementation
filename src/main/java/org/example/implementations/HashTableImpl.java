@@ -8,16 +8,14 @@ import org.example.interfaces.Bucket;
 import org.example.interfaces.HashTable;
 import org.example.interfaces.LinkedList;
 
-import java.util.Map;
-
 @JsonSerializable
 public class HashTableImpl<K, V> implements HashTable<K, V> {
     private static final int DEFAULT_SIZE = 10;
     private final int DEFAULT_THRESHOLD = 8;
     @JsonElement(key = "buckets")
     private Bucket<HashTableEntry<K, V>>[] buckets;
-    private int capacity;
-    private int threshold;
+    private final int capacity;
+    private final int threshold;
 
     public HashTableImpl() {
         this(DEFAULT_SIZE);
@@ -25,23 +23,19 @@ public class HashTableImpl<K, V> implements HashTable<K, V> {
 
     public HashTableImpl(int capacity) {
         this.capacity = capacity;
-        this.threshold = getThreshold();
+        this.threshold = setThreshold();
         this.buckets = new Bucket[capacity];
         for (int i = 0; i < capacity; i++) {
             buckets[i] = new LinkedListImpl<>();
         }
     }
-
-    public Bucket<HashTableEntry<K, V>>[] getBuckets() {
-        return buckets;
-    }
-
+    
     private int getIndex(K key) {
         return key.hashCode() % buckets.length;
     }
 
     @Override
-    public void insert(@HashTableData(keyNotNull = true, valueNotNull = true, keyMustBePositiveInteger = true) HashTableEntry<K, V> data) {
+    public void insert(@HashTableData() HashTableEntry<K, V> data) {
         HashTableValidator.validateData(data.getKey(), data.getValue(), this.getClass(), "insert");
         var index = getIndex(data.getKey());
         if (buckets[index].size() <= threshold) {
@@ -109,7 +103,7 @@ public class HashTableImpl<K, V> implements HashTable<K, V> {
 
         var entry = buckets[index].search(new HashTableEntry<>(key, null));
         if (entry != null) {
-            return entry.value;
+            return entry.getValue();
         }
 
         return null;
@@ -122,7 +116,7 @@ public class HashTableImpl<K, V> implements HashTable<K, V> {
         }
     }
 
-    private int getThreshold() {
+    private int setThreshold() {
         var thresholdValue = System.getenv("threshold");
         try {
             if (thresholdValue != null) {
@@ -136,6 +130,11 @@ public class HashTableImpl<K, V> implements HashTable<K, V> {
             System.out.println("Invalid threshold value, using default (8).");
         }
         return DEFAULT_THRESHOLD;
+    }
+
+    @Override
+    public int getThreshold() {
+        return threshold;
     }
 
     @Override
@@ -158,5 +157,8 @@ public class HashTableImpl<K, V> implements HashTable<K, V> {
             totalSize += bucket.size();
         }
         return totalSize;
+    }
+    public Bucket<HashTableEntry<K,V>>[] getBuckets() {
+        return buckets;
     }
 }

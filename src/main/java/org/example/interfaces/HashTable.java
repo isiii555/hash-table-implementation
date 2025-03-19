@@ -2,11 +2,12 @@ package org.example.interfaces;
 
 import org.example.implementations.HashTableEntry;
 
-import java.util.Map;
-
 public interface HashTable<K, V> {
 
     void insert(HashTableEntry<K, V> data);
+
+    int getThreshold();
+    Bucket<HashTableEntry<K,V>>[] getBuckets();
 
     void put(K key, V value);
 
