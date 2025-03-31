@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: islam
+      changes:
+        - createTable:
+            tableName: hashTables
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: size
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: threshold
+                  type: int
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: buckets
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: size
+                  type: int
+              - column:
+                  name: table_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_bucket_hashtable
+                    references: hashTables(id)
+                    deleteCascade: true
+        - createTable:
+            tableName: entries
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: key
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: bucket_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_entry_bucket
+                    references: buckets(id)
+                    deleteCascade: true
