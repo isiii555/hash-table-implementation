@@ -30,7 +30,7 @@ public class HashTableController {
     @PostMapping("/file/{hashTableId}")
     @ResponseStatus(HttpStatus.CREATED)
     public String file(@PathVariable int hashTableId, @RequestBody String filePath) {
-//      fileInputService.insertEntry();
-        return null;
+        hashTableService.insertEntryWithFile(hashTableId,filePath);
+        return "Values in file succesfully added!";
     }
 }

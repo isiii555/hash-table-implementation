@@ -1,5 +1,6 @@
 package com.hashtable.hash_table_implementation.services.impl;
 
+import com.hashtable.hash_table_implementation.exception.NotFoundException;
 import com.hashtable.hash_table_implementation.repository.BucketRepository;
 import com.hashtable.hash_table_implementation.repository.EntryRepository;
 import com.hashtable.hash_table_implementation.repository.HashTableRepository;
@@ -12,6 +13,10 @@ import com.hashtable.hash_table_implementation.repository.entity.HashTableEntity
 import com.hashtable.hash_table_implementation.services.HashTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 @Service
 public class HashTableServiceImpl implements HashTableService {
@@ -50,7 +55,7 @@ public class HashTableServiceImpl implements HashTableService {
     @Override
     public int insertEntryManual(int hashTableId, String value) {
         var hashTable = hashTableRepository.findById(hashTableId)
-                .orElseThrow(() -> new RuntimeException("HashTable not found with ID: " + hashTableId));
+                .orElseThrow(() -> new NotFoundException("HashTable not found with ID: " + hashTableId));
 
         int key = (int) (Math.random() * 101);
         var entry = new EntryEntity();
@@ -59,7 +64,7 @@ public class HashTableServiceImpl implements HashTableService {
 
         var index = Integer.hashCode(key) % hashTable.getBuckets().size();
         var bucket = bucketRepository.findByHashTable_IdAndBucketIndex(hashTableId,index)
-                .orElseThrow(() -> new RuntimeException("Bucket not found with tableID: " + hashTableId));
+                .orElseThrow(() -> new NotFoundException("Bucket not found with tableID: " + hashTableId));
 
         entry.setBucket(bucket);
         bucket.setSize(bucket.getSize()+1);
@@ -71,8 +76,36 @@ public class HashTableServiceImpl implements HashTableService {
     }
 
     @Override
-    public void insertEntryWithFile() {
+    public void insertEntryWithFile(int hashTableId, String filePath) {
+        var hashTable = hashTableRepository.findById(hashTableId)
+                .orElseThrow(() -> new NotFoundException("HashTable not found with ID: " + hashTableId));
 
+        filePath = filePath.replace("\\", "/").replace("\"", "");
+
+        var file = new File(filePath);
+
+        try (Scanner fileReader = new Scanner(file)) {
+            while (fileReader.hasNextLine()) {
+                String value = fileReader.nextLine();
+                int key = (int) (Math.random() * 101);
+                var entry = new EntryEntity();
+                entry.setKey(key);
+                entry.setValue(value);
+
+                var index = Integer.hashCode(key) % hashTable.getBuckets().size();
+                var bucket = bucketRepository.findByHashTable_IdAndBucketIndex(hashTableId,index)
+                        .orElseThrow(() -> new NotFoundException("Bucket not found with tableID: " + hashTableId));
+
+                entry.setBucket(bucket);
+                bucket.setSize(bucket.getSize()+1);
+
+                entry = entryRepository.save(entry);
+                bucket.setSize(bucket.getSize()+1);
+                bucketRepository.save(bucket);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found!");
+        }
     }
 
 
